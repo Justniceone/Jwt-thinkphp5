@@ -5,9 +5,13 @@ use extend\JWT\BeforeValidException;
 use extend\jwt\ExpiredException;
 use extend\jwt\JWT;
 use extend\jwt\SignatureInvalidException;
+use Qiniu\Auth;
+use Qiniu\Storage\UploadManager;
 use think\Controller;
 use think\Cookie;
 use think\Db;
+use think\Exception;
+use think\Log;
 use think\Session;
 use think\Validate;
 
@@ -75,6 +79,38 @@ class Home extends Controller
         {
             echo '不支持的签名格式';
         }
+    }
 
+    public function upload()
+    {
+        if($this->request->isPost())
+        {
+            //先上传到服务器再上传到七牛云
+            $file = $_FILES['img'];
+            $key = 'bp_'.time();
+            $accessKey = 'gEaQS_5EWRYAAuz7nZc9plt40jRRb6HU7MI0aXwh';
+            $secretKey = 'ABWGH-ma6kW55zcfwgzPxQJ9KUe_PQDXBn3ImW6q';
+            $auth = new Auth($accessKey, $secretKey);
+            $bucket = 'bopang';
+            $link = 'http://ovy9vleun.bkt.clouddn.com/';
+            // 生成上传Token
+            $token = $auth->uploadToken($bucket);
+
+            // 构建 UploadManager 对象
+            $uploadMgr = new UploadManager();
+            try
+            {
+                list($ret,$err) = $uploadMgr->putFile($token,$key,$file['tmp_name']);
+                if(isset($ret['key']))
+                {
+                    return json(['code'=>200,'msg'=>'','data'=>['url'=>$link.$ret['key']]]);
+                }
+            }catch (\Exception $e)
+            {
+                Log::write('uploaded to qiniu failed at'.date('Y-m-d H:i:s'));
+            }
+            return json(['code'=>500,'msg'=>'上传失败','data'=>[]]);
+        }
+        return $this->fetch('upload');
     }
 }
