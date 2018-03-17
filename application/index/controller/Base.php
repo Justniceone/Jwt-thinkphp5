@@ -1,6 +1,8 @@
 <?php
 namespace app\index\controller;
 
+use extend\jwt\JWT;
+use extend\jwt\SignatureInvalidException;
 use think\Controller;
 use think\Cookie;
 use think\Db;
@@ -34,6 +36,22 @@ class Base extends Controller
                 }
                 $this->error('自动登录失败,请重新登录','/index/home/login');
             }
+        }
+    }
+
+    public function decode()
+    {
+        $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJpc19hZG1pbiI6MCwiZXhwIjoxNTIxMjcyNDk3fQ.h1DMSjNNYyUnR95-EAlONl33vkBzFahLYGe-u8-oBSk";
+
+        try {
+            $user = JWT::decode($token, 'awdagrsjgshgkdawfadsht', ['HS256']);
+            var_dump($user);
+        }catch (SignatureInvalidException $e)
+        {
+            echo '签名认证失败';
+        }catch (\UnexpectedValueException $e)
+        {
+            echo '不支持的签名格式';
         }
     }
 }

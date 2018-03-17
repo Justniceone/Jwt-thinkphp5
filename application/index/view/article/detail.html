@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <link rel="stylesheet" href="https://cdn.bootcss.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<table class="table table-bordered">
+    <tr>
+        <th>id</th>
+        <th>title</th>
+        <th>评论</th>
+        <th>标签</th>
+    </tr>
+    <tr>
+        <td><?=$list['id']?></td>
+        <td><?=$list['title']?></td>
+        <td>
+            <!--<?php print_r($list->comment);?>-->
+            <?php  foreach ($list->comment as $v):?>
+            <?=$v->comment?><br>
+            <?php endforeach;?>
+        </td>
+        <td>
+           <?=$tags[0]['tag_name']?>
+        </td>
+    </tr>
+</table>
+<a href="/index/article/lists">返回</a>
+</body>
+</html>

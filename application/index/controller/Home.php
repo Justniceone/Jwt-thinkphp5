@@ -1,16 +1,12 @@
 <?php
 namespace app\index\controller;
 
-use extend\JWT\BeforeValidException;
-use extend\jwt\ExpiredException;
 use extend\jwt\JWT;
-use extend\jwt\SignatureInvalidException;
 use Qiniu\Auth;
 use Qiniu\Storage\UploadManager;
 use think\Controller;
 use think\Cookie;
 use think\Db;
-use think\Exception;
 use think\Log;
 use think\Session;
 use think\Validate;
@@ -65,22 +61,6 @@ class Home extends Controller
         var_dump($token);
     }
 
-    public function decode()
-    {
-        $token = "eyJ0eXAiOiJKV1QiLCJhbGciOiJIUzI1NiJ9.eyJ1c2VyX2lkIjoxLCJpc19hZG1pbiI6MCwiZXhwIjoxNTIxMjcyNDk3fQ.h1DMSjNNYyUnR95-EAlONl33vkBzFahLYGe-u8-oBSk";
-
-        try {
-            $user = JWT::decode($token, 'awdagrsjgshgkdawfadsht', ['HS256']);
-            var_dump($user);
-        }catch (SignatureInvalidException $e)
-        {
-            echo '签名认证失败';
-        }catch (\UnexpectedValueException $e)
-        {
-            echo '不支持的签名格式';
-        }
-    }
-
     public function upload()
     {
         if($this->request->isPost())
@@ -112,5 +92,14 @@ class Home extends Controller
             return json(['code'=>500,'msg'=>'上传失败','data'=>[]]);
         }
         return $this->fetch('upload');
+    }
+
+    public function reg()
+    {
+        $str = file_get_contents('http://edu.51cto.com/t/exam/list/id-25.html');
+        //preg_match_all('/<ul class="subNav">([\s\S]*?)<\/ul>/m',$str,$subject);
+        preg_match_all('/<ul class="NavList">([\s\S]*?)<\/ul>\n<\/div> /',$str,$subject);
+        preg_match_all('/<p>(.*?)<\/p>/',$subject[0][0],$master);
+        var_dump($master);
     }
 }
