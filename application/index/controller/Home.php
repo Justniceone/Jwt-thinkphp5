@@ -8,11 +8,13 @@ use think\Controller;
 use think\Cookie;
 use think\Db;
 use think\Log;
+use think\Request;
 use think\Session;
 use think\Validate;
 
 class Home extends Controller
 {
+
     public function Login()
     {
         if($this->request->isPost())
@@ -87,7 +89,7 @@ class Home extends Controller
                 }
             }catch (\Exception $e)
             {
-                Log::write('uploaded to qiniu failed at'.date('Y-m-d H:i:s'));
+                Log::write('uploaded to qiniu failed at'.date('Y-m-d H:i:s').$e->getMessage());
             }
             return json(['code'=>500,'msg'=>'上传失败','data'=>[]]);
         }
@@ -101,5 +103,16 @@ class Home extends Controller
         preg_match_all('/<ul class="NavList">([\s\S]*?)<\/ul>\n<\/div> /',$str,$subject);
         preg_match_all('/<p>(.*?)<\/p>/',$subject[0][0],$master);
         var_dump($master);
+    }
+
+    public function test(Request $request)
+    {
+        var_dump($request->url());
+    }
+
+    public function test2()
+    {
+        $articles = \db('article',[],false)->select();
+        var_dump($articles);
     }
 }

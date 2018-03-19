@@ -1,8 +1,8 @@
 <?php
 namespace app\index\controller;
 
-use app\index\model\Tag;
 use think\Db;
+use think\Request;
 
 class Article extends Base
 {
@@ -22,5 +22,16 @@ class Article extends Base
         $sql = 'select a.*,group_concat(t.tname) as tag_name from article a join art_tag  `at` on a.id = `at`.aid join tag t on t.id = `at`.tid  where a.id ='.$id.'  group by a.id ';
         $tags = Db::query($sql);
         return $this->fetch('detail',['list'=>$list,'tags'=>$tags]);
+    }
+
+    public function articles($page = 1,$pagesize = 5)
+    {
+        $lists = Db::name('article')->limit($pagesize,($page-1)*$pagesize)->select();
+        return json(['code'=>200,'msg'=>'','data'=>$lists]);
+    }
+
+    public function update()
+    {
+        return $this->fetch('update');
     }
 }
